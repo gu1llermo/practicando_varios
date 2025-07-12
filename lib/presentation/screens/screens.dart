@@ -1,0 +1,10 @@
+export 'package:practicando/presentation/screens/checkbox_list_title_screen.dart';
+export 'package:practicando/presentation/screens/custom_labeled_switch_example_screen.dart';
+export 'package:practicando/presentation/screens/custom_painter_screen.dart';
+export 'package:practicando/presentation/screens/detector_gestos_screen.dart';
+export 'package:practicando/presentation/screens/home_page_screen.dart';
+export 'package:practicando/presentation/screens/kan_screen.dart';
+export 'package:practicando/presentation/screens/reloj_screen.dart';
+export 'package:practicando/presentation/screens/stack_screen.dart';
+export 'package:practicando/presentation/screens/switch_title_screen.dart';
+export 'package:practicando/presentation/widgets/bar_widget.dart';
