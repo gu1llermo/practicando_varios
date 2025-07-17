@@ -3,13 +3,10 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:practicando/shared/organizador.dart';
 
 class Tarea extends StatefulWidget {
   final String title;
   final int id;
-  final StateNotifier<Organizador> stateNotifier;
   // final ContextTarea _contextTarea = ContextTarea();
   final ValueChanged<int> onChanged;
 
@@ -18,7 +15,7 @@ class Tarea extends StatefulWidget {
       required this.title,
       required this.id,
       required this.onChanged,
-      required this.stateNotifier});
+     });
 
   // bool get isCompleted => _contextTarea.completed;
 

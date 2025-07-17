@@ -10,7 +10,8 @@ class MenuItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(menuItem.title),
+        title: Text(menuItem.title, textAlign: TextAlign.center,),
+        leading: menuItem.leading,
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {

@@ -1,18 +1,34 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:practicando/shared/organizador.dart';
+
+import '../../shared/tarea.dart';
 
 final organizadorNotifierProvider =
-    StateNotifierProvider<OrganizadorNotifier, Organizador>(
+    StateNotifierProvider<OrganizadorNotifier, List<Tarea>>(
         (ref) => OrganizadorNotifier());
 
-class OrganizadorNotifier extends StateNotifier<Organizador> {
-  OrganizadorNotifier() : super(Organizador(tareas: []));
+class OrganizadorNotifier extends StateNotifier<List<Tarea>> {
+  OrganizadorNotifier() : super([]);
 
-  void addTarea(String title, StateNotifier<Organizador> stateNotifier) {
-    state.addTarea(title, stateNotifier);
+  int _id = 0;
+
+  void addTarea(String title) {
+    final tarea = Tarea(
+      title: title, 
+      id: _id++, 
+      onChanged: deleteTarea, );
+      state = [...state, tarea];
+    
   }
 
   void deleteTarea(int id) {
-    state.deleteTarea(id);
+    final index = state.indexWhere((tarea) => tarea.id==id);
+    if (index==-1) return;// no hagas nada
+    state.removeAt(index);
+    state = [...state];
   }
+
+  
+
+  
+
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router/menu_items.dart';
+import 'presentation/theme.dart';
 import 'presentation/widgets/menu_item_card.dart';
 
 void main() {
@@ -13,10 +14,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       title: 'Material App',
+      theme: ThemeData.dark(),
+      // theme: lightTheme,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home:  PracticandoView(),
+      home:  const PracticandoView(),
     );
   }
 }
@@ -30,12 +34,15 @@ class PracticandoView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Practicando'),
       ),
-      body: ListView.builder(
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final menuItem = menuItems[index];
-          return MenuItemCard(menuItem: menuItem);
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: menuItems.length,
+          itemBuilder: (context, index) {
+            final menuItem = menuItems[index];
+            return MenuItemCard(menuItem: menuItem);
+          },
+        ),
       ),
     );
   }

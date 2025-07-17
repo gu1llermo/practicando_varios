@@ -8,14 +8,14 @@ class CheckboxListTitleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final organizador = Organizador(tareas: []);
-    final organizador = ref.watch(organizadorNotifierProvider);
+    final tareas = ref.watch(organizadorNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('CheckboxListTitleScreen')),
       body: ListView.builder(
-        itemCount: organizador.tareas.length,
+        itemCount: tareas.length,
         itemBuilder: (context, index) {
-          return organizador.tareas[index];
+          return tareas[index];
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -23,7 +23,7 @@ class CheckboxListTitleScreen extends ConsumerWidget {
           //todo: add tarea
           final notificador = ref.read(organizadorNotifierProvider.notifier);
 
-          notificador.addTarea('Tarea nro: ', notificador);
+          notificador.addTarea('Tarea nro: ');
         },
         child: const Icon(Icons.add),
       ),
