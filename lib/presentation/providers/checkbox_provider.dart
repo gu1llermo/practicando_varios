@@ -1,13 +1,17 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../shared/tarea.dart';
 
-final organizadorNotifierProvider =
-    StateNotifierProvider<OrganizadorNotifier, List<Tarea>>(
-        (ref) => OrganizadorNotifier());
 
-class OrganizadorNotifier extends StateNotifier<List<Tarea>> {
-  OrganizadorNotifier() : super([]);
+part 'checkbox_provider.g.dart';
+// final organizadorNotifierProvider =
+//     StateNotifierProvider<OrganizadorNotifier, List<Tarea>>(
+//         (ref) => OrganizadorNotifier());
+
+@Riverpod()
+class OrganizadorNotifier extends _$OrganizadorNotifier {
+  @override
+  List<Tarea> build()=> const [];
 
   int _id = 0;
 
@@ -26,9 +30,5 @@ class OrganizadorNotifier extends StateNotifier<List<Tarea>> {
     state.removeAt(index);
     state = [...state];
   }
-
-  
-
-  
 
 }

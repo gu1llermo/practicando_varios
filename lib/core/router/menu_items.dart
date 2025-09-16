@@ -14,14 +14,25 @@ class MenuItem {
 final menuItems = [
   MenuItem(
     //leading: const Icon(Icons.timer),
-    title: 'Nombres Screen',
-    screenDestination: const NombresScreen(),
+    title: 'Counter Transforms',
+    screenDestination: const CounterTransforms(),
+  ),
+  MenuItem(
+    //leading: const Icon(Icons.timer),
+    title: 'Perspectiva 3D Screen',
+    screenDestination: const Perspectiva3DScreen(),
   ),
   MenuItem(
     //leading: const Icon(Icons.timer),
     title: 'Animaciones',
     screenDestination: const AnimacionesScreen(),
   ),
+  MenuItem(
+    //leading: const Icon(Icons.timer),
+    title: 'Nombres Screen',
+    screenDestination: const NombresScreen(),
+  ),
+  
   MenuItem(
     //leading: const Icon(Icons.timer),
     title: 'Login Screen',

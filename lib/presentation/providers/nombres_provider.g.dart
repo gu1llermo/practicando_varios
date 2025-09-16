@@ -6,21 +6,57 @@ part of 'nombres_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$nombresNotifierHash() => r'2cc9eb51122a6198a5bf2a0056ca60ec744cca32';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [NombresNotifier].
 @ProviderFor(NombresNotifier)
-final nombresNotifierProvider = AutoDisposeNotifierProvider<NombresNotifier,
-    UnmodifiableListView<String>>.internal(
-  NombresNotifier.new,
-  name: r'nombresNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$nombresNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const nombresProvider = NombresNotifierProvider._();
 
-typedef _$NombresNotifier = AutoDisposeNotifier<UnmodifiableListView<String>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class NombresNotifierProvider
+    extends $NotifierProvider<NombresNotifier, UnmodifiableListView<String>> {
+  const NombresNotifierProvider._()
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'nombresProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
+
+  @override
+  String debugGetCreateSourceHash() => _$nombresNotifierHash();
+
+  @$internal
+  @override
+  NombresNotifier create() => NombresNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UnmodifiableListView<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UnmodifiableListView<String>>(value),
+    );
+  }
+}
+
+String _$nombresNotifierHash() => r'52414a6ef96b919c49fd2392f72a57f3ad6e2230';
+
+abstract class _$NombresNotifier
+    extends $Notifier<UnmodifiableListView<String>> {
+  UnmodifiableListView<String> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref
+        as $Ref<UnmodifiableListView<String>, UnmodifiableListView<String>>;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<UnmodifiableListView<String>, UnmodifiableListView<String>>,
+        UnmodifiableListView<String>,
+        Object?,
+        Object?>;
+    element.handleValue(ref, created);
+  }
+}

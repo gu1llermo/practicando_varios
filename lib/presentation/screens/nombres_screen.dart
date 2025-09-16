@@ -8,7 +8,7 @@ class NombresScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nombres = ref.watch(nombresNotifierProvider);
+    final nombres = ref.watch(nombresProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Nombres Screen'),),
@@ -21,7 +21,7 @@ class NombresScreen extends ConsumerWidget {
           children: [
             Expanded(child: Text(nombre)),
             IconButton(onPressed: () {
-              ref.read(nombresNotifierProvider.notifier).deleteNombre(nombre);
+              ref.read(nombresProvider.notifier).deleteNombre(nombre);
             }, icon: const Icon(Icons.delete_forever, color: Colors.red,))
           ],
         ),);
@@ -30,7 +30,7 @@ class NombresScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          ref.read(nombresNotifierProvider.notifier).addNombre();
+          ref.read(nombresProvider.notifier).addNombre();
         },),
         
     );

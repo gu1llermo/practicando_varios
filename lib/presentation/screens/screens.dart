@@ -12,3 +12,5 @@ export 'splash_screen.dart';
 export 'login_screen.dart';
 export 'animaciones_screen.dart';
 export 'nombres_screen.dart';
+export 'prespectiva_3d_screen.dart';
+export 'counter_transforms.dart';
