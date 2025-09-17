@@ -14,6 +14,11 @@ class MenuItem {
 final menuItems = [
   MenuItem(
     //leading: const Icon(Icons.timer),
+    title: 'Botón interactivo',
+    screenDestination: const BotonInteractivoScreen(),
+  ),
+  MenuItem(
+    //leading: const Icon(Icons.timer),
     title: 'Counter Transforms',
     screenDestination: const CounterTransforms(),
   ),

@@ -36,6 +36,8 @@ class _CustomPainter extends CustomPainter {
     path.lineTo(size.width, size.height * .35);
     path.lineTo(size.width, 0);
 
+    path.close();
+
     canvas.drawPath(path, lapiz);
   }
 

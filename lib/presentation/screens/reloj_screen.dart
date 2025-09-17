@@ -10,8 +10,8 @@ class RelojScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Reloj Screen')),
       body: const Center(
         child: Stack(alignment: Alignment.center, children: [
-          Circulo(radio: 200),
-          Circulo(radio: 100),
+          _Circulo(radio: 200),
+          _Circulo(radio: 100),
           Positioned(
             right: 35,
             child: Manecilla(
@@ -62,9 +62,9 @@ class RelojScreen extends StatelessWidget {
   }
 }
 
-class Circulo extends StatelessWidget {
+class _Circulo extends StatelessWidget {
   final double radio;
-  const Circulo({
+  const _Circulo({
     super.key,
     required this.radio,
   });
