@@ -1,98 +1,375 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class BotonInteractivoScreen extends StatelessWidget {
+enum TrianguloPosition {
+  top(0),
+  right(pi / 2),
+  bottom(pi),
+  left(3 * pi / 2);
+
+  final double angle;
+  const TrianguloPosition(this.angle);
+}
+
+// enum CombinacionTriangulo {
+//   uno(Colors.transparent, Colors.transparent),
+//   dos(Colors.blue, Colors.blue),
+//   tres(Colors.blue, Colors.red),
+//   cuatro(Colors.red, Colors.red),
+//   ;
+
+//   final Color fillColor;
+//   final Color borderColor;
+//   const CombinacionTriangulo(this.fillColor, this.borderColor);
+
+//   int get nextIndex {
+//     final length = CombinacionTriangulo.values.length;
+//     if (index >= length - 1) {
+//       return 0;
+//     }
+//     return index + 1;
+//   }
+// }
+
+class BotonInteractivoScreen extends StatefulWidget {
   const BotonInteractivoScreen({super.key});
 
   @override
+  State<BotonInteractivoScreen> createState() => _BotonInteractivoScreenState();
+}
+
+class _BotonInteractivoScreenState extends State<BotonInteractivoScreen> {
+  final strokeWidth = 20.0;
+  final anchoBoderExterior = 2.0;
+  final double radiusPercentage = 0.2;
+  final lado = 300.0;
+
+  late Color surfaceColor;
+
+  late List<ComposicionColores> _combinacionColoresTriangulo;
+
+  late List<ComposicionColores> _combinacionColoresCirculo;
+
+  Triangulo topTriangle = Triangulo(position: TrianguloPosition.top);
+  Triangulo bottomTriangle = Triangulo(position: TrianguloPosition.bottom);
+  Triangulo leftTriangle = Triangulo(position: TrianguloPosition.left);
+  Triangulo rightTriangle = Triangulo(position: TrianguloPosition.right);
+
+  Circulo circulo = Circulo();
+
+  void onTapCenter() {
+    setState(() {
+      int index = circulo.index + 1;
+      if (index >= _combinacionColoresCirculo.length ) {
+        index = 0;
+      }
+      circulo = Circulo(
+          borderColor: _combinacionColoresCirculo[index].borderColor,
+          fillColor: _combinacionColoresCirculo[index].fillColor,
+          index: index);
+    });
+
+    // print('Centro');
+  }
+
+  void onTapTop() {
+    setState(() {
+      int index = topTriangle.index + 1;
+      if (index >= _combinacionColoresTriangulo.length ) {
+        index = 0;
+      }
+      topTriangle = Triangulo(
+          borderColor: _combinacionColoresTriangulo[index].borderColor,
+          fillColor: _combinacionColoresTriangulo[index].fillColor,
+          index: index, position: TrianguloPosition.top);
+    });
+    // print('Top');
+  }
+
+  void onTapBottom() {
+    setState(() {
+      int index = bottomTriangle.index + 1;
+      if (index >= _combinacionColoresTriangulo.length ) {
+        index = 0;
+      }
+      bottomTriangle = Triangulo(
+          borderColor: _combinacionColoresTriangulo[index].borderColor,
+          fillColor: _combinacionColoresTriangulo[index].fillColor,
+          index: index, position: TrianguloPosition.bottom);
+    });
+  }
+  void onTapLeft() {
+    setState(() {
+      int index = leftTriangle.index + 1;
+      if (index >= _combinacionColoresTriangulo.length ) {
+        index = 0;
+      }
+      leftTriangle = Triangulo(
+          borderColor: _combinacionColoresTriangulo[index].borderColor,
+          fillColor: _combinacionColoresTriangulo[index].fillColor,
+          index: index, position: TrianguloPosition.left);
+    });
+  }
+  void onTapRight() {
+    setState(() {
+      int index = rightTriangle.index + 1;
+      if (index >= _combinacionColoresTriangulo.length ) {
+        index = 0;
+      }
+      rightTriangle = Triangulo(
+          borderColor: _combinacionColoresTriangulo[index].borderColor,
+          fillColor: _combinacionColoresTriangulo[index].fillColor,
+          index: index, position: TrianguloPosition.right);
+    });
+  }
+
+
+  @override
+  void didChangeDependencies() {
+    final colors = Theme.of(context).colorScheme;
+    surfaceColor = colors.surface;
+
+    _combinacionColoresCirculo = <ComposicionColores>[
+      ComposicionColores(surfaceColor, surfaceColor),
+      ComposicionColores(Colors.blue, Colors.blue),
+      ComposicionColores(Colors.blue, Colors.red),
+      ComposicionColores(Colors.red, Colors.red),
+    ];
+
+    _combinacionColoresTriangulo = <ComposicionColores>[
+      ComposicionColores(Colors.transparent, Colors.transparent),
+      ComposicionColores(Colors.blue, Colors.blue),
+      ComposicionColores(Colors.blue, Colors.red),
+      ComposicionColores(Colors.red, Colors.red),
+    ];
+
+    circulo = Circulo(
+      borderColor: surfaceColor,
+      fillColor: surfaceColor,
+    );
+
+    super.didChangeDependencies();
+  }
+
+  void _handleTap(Offset position) {
+    double x = position.dx;
+    double y = position.dy;
+    double centerX = lado / 2;
+    double centerY = lado / 2;
+    double radius = lado * radiusPercentage; // Radio del círculo central
+
+    // Verificar si está en el círculo central
+    double distanceFromCenter =
+        ((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)).abs();
+
+    if (distanceFromCenter <= radius * radius) {
+      onTapCenter();
+
+      return;
+    }
+
+    // Determinar en qué triángulo está el punto
+    if (y < x && y < lado - x) {
+      // Triángulo superior
+      onTapTop();
+    } else if (y > x && y < lado - x) {
+      // Triángulo izquierdo
+      onTapLeft();
+    } else if (y > x && y > lado - x) {
+      // Triángulo inferior
+      onTapBottom();
+    } else if (y < x && y > lado - x) {
+      // Triángulo derecho (cian)
+      onTapRight();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final strokeWidth = 20.0;
-    final anchoBoderExterior = 2.0;
-    final double radiusPercentage = 0.2;
-    final lado = 300.0;
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text('Botón interactivo'),
       ),
       body: Center(
-        child: Stack(
-          children: [
-            CustomTrianguloWidget(
-              lado: lado,
-              strokeWidth: strokeWidth,
-              anchoBoderExterior: anchoBoderExterior,
-              radiusPercentage: radiusPercentage,
-            ),
+        child: SizedBox.square(
+          dimension: lado,
+          child: GestureDetector(
+            onTapUp: (details) {
+              // tengo que detectar qué zona se pulsó y en base a eso
+              // ejecutar un acción
+              // te voy a pasar las coordenadas y me vas a decir
+              // qué zona se pulsó
 
-            // Transform(
-            //   transform: Matrix4.identity()..rotateZ(0),
-            //   alignment: Alignment.topLeft,
-            //   origin: Offset(lado / 2, lado / 2),
-            //   child: CustomTrianguloWidget(
-            //     lado: lado,
-            //     strokeWidth: strokeWidth,
-            //     anchoBoderExterior: anchoBoderExterior,
-            //     radiusPercentage: radiusPercentage,
-            //   ),
-            // ),
-            Transform(
-              transform: Matrix4.identity()..rotateZ(pi / 2),
-              alignment: Alignment.topLeft,
-              origin: Offset(lado / 2, lado / 2),
-              child: CustomTrianguloWidget(
-                lado: lado,
-                strokeWidth: strokeWidth,
-                anchoBoderExterior: anchoBoderExterior,
-                radiusPercentage: radiusPercentage,
-              ),
+              _handleTap(details.localPosition);
+            },
+            child: Stack(
+              children: [
+                // topTriangle
+                // CustomTrianguloWidget(
+                //   strokeWidth: strokeWidth,
+                //   anchoBoderExterior: anchoBoderExterior,
+                //   radiusPercentage: radiusPercentage,
+                //   borderColor: Colors.red,
+                //   fillColor: Colors.blue,
+                // ),
+                // topTriangle
+                TrianguloWidget(
+                  strokeWidth: strokeWidth,
+                  anchoBoderExterior: anchoBoderExterior,
+                  radiusPercentage: radiusPercentage,
+                  borderColor: topTriangle.borderColor,
+                  fillColor: topTriangle.fillColor,
+                  position: topTriangle.position,
+                ),
+                // rightTriangle
+                TrianguloWidget(
+                  strokeWidth: strokeWidth,
+                  anchoBoderExterior: anchoBoderExterior,
+                  radiusPercentage: radiusPercentage,
+                  borderColor: rightTriangle.borderColor,
+                  fillColor: rightTriangle.fillColor,
+                  position: rightTriangle.position,
+                ),
+                // bottomTriangle
+                TrianguloWidget(
+                  strokeWidth: strokeWidth,
+                  anchoBoderExterior: anchoBoderExterior,
+                  radiusPercentage: radiusPercentage,
+                  borderColor: bottomTriangle.borderColor,
+                  fillColor: bottomTriangle.fillColor,
+                  position: bottomTriangle.position,
+                ),
+                // leftTriangle
+                TrianguloWidget(
+                  strokeWidth: strokeWidth,
+                  anchoBoderExterior: anchoBoderExterior,
+                  radiusPercentage: radiusPercentage,
+                  borderColor: leftTriangle.borderColor,
+                  fillColor: leftTriangle.fillColor,
+                  position: leftTriangle.position,
+                ),
+                // topTriangle
+                // Transform(
+                //   transform: Matrix4.identity()..rotateZ(0),
+                //   alignment: Alignment.topLeft,
+                //   origin: Offset(lado / 2, lado / 2),
+                //   child: CustomTrianguloWidget(
+                //     strokeWidth: strokeWidth,
+                //     anchoBoderExterior: anchoBoderExterior,
+                //     radiusPercentage: radiusPercentage,
+                //     borderColor: Colors.red,
+                //     fillColor: Colors.blue,
+                //   ),
+                // ),
+                // rightTriangle
+                // Transform(
+                //   transform: Matrix4.identity()..rotateZ(pi / 2),
+                //   alignment: Alignment.topLeft,
+                //   origin: Offset(lado / 2, lado / 2),
+                //   child: CustomTrianguloWidget(
+                //     // lado: lado,
+                //     strokeWidth: strokeWidth,
+                //     anchoBoderExterior: anchoBoderExterior,
+                //     radiusPercentage: radiusPercentage,
+                //     borderColor: Colors.red,
+                //     fillColor: Colors.blue,
+                //   ),
+                // ),
+                // // bottomTriangle
+                // Transform(
+                //   transform: Matrix4.identity()..rotateZ(pi),
+                //   alignment: Alignment.topLeft,
+                //   origin: Offset(lado / 2, lado / 2),
+                //   child: CustomTrianguloWidget(
+                //     // lado: lado,
+                //     strokeWidth: strokeWidth,
+                //     anchoBoderExterior: anchoBoderExterior,
+                //     radiusPercentage: radiusPercentage,
+                //     borderColor: Colors.red,
+                //     fillColor: Colors.blue,
+                //   ),
+                // ),
+                // // leftTriangle
+                // Transform(
+                //   transform: Matrix4.identity()..rotateZ(3 * pi / 2),
+                //   alignment: Alignment.topLeft,
+                //   origin: Offset(lado / 2, lado / 2),
+                //   child: CustomTrianguloWidget(
+                //     // lado: lado,
+                //     strokeWidth: strokeWidth,
+                //     anchoBoderExterior: anchoBoderExterior,
+                //     radiusPercentage: radiusPercentage,
+                //     borderColor: Colors.red,
+                //     fillColor: Colors.blue,
+                //   ),
+                // ),
+                // dibujo base esqueleto
+                CustomPaint(
+                  size: Size.square(double.infinity),
+                  painter: MyCustomPainter(
+                    radiusPercentage: radiusPercentage,
+                    anchoBorderExterior: anchoBoderExterior,
+                    borderColor: colors.onSurface,
+                  ),
+                ),
+                // circulo central
+                CustomPaint(
+                  size: Size.square(double.infinity),
+                  painter: CustomCirculoPainter(
+                    strokeWidth: strokeWidth,
+                    anchoBordeExterior: anchoBoderExterior,
+                    radiusPercentage: radiusPercentage,
+                    fillColor: circulo.fillColor,
+                    borderColor: circulo.borderColor,
+                  ),
+                ),
+              ],
             ),
-
-            Transform(
-              transform: Matrix4.identity()..rotateZ(pi),
-              alignment: Alignment.topLeft,
-              origin: Offset(lado / 2, lado / 2),
-              child: CustomTrianguloWidget(
-                lado: lado,
-                strokeWidth: strokeWidth,
-                anchoBoderExterior: anchoBoderExterior,
-                radiusPercentage: radiusPercentage,
-              ),
-            ),
-
-            Transform(
-              transform: Matrix4.identity()..rotateZ(3 * pi / 2),
-              alignment: Alignment.topLeft,
-              origin: Offset(lado / 2, lado / 2),
-              child: CustomTrianguloWidget(
-                lado: lado,
-                strokeWidth: strokeWidth,
-                anchoBoderExterior: anchoBoderExterior,
-                radiusPercentage: radiusPercentage,
-              ),
-            ),
-            CustomPaint(
-              size: Size.square(lado),
-              painter: MyCustomPainter(
-                radiusPercentage: radiusPercentage,
-                anchoBorderExterior: anchoBoderExterior,
-              ),
-            ),
-            CustomPaint(
-              size: Size.square(lado),
-              painter: CustomCirculoPainter(
-                strokeWidth: strokeWidth,
-                anchoBordeExterior: anchoBoderExterior,
-                fillColor: Colors.blue,
-                radiusPercentage: radiusPercentage,
-                borderColor: Colors.red,
-              ),
-            ),
-            
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class TrianguloWidget extends StatelessWidget {
+  const TrianguloWidget({
+    super.key,
+    required this.strokeWidth,
+    required this.anchoBoderExterior,
+    required this.radiusPercentage,
+    required this.borderColor,
+    required this.fillColor,
+    required this.position,
+  });
+
+  final double strokeWidth;
+  final double anchoBoderExterior;
+  final double radiusPercentage;
+  final Color borderColor;
+  final Color fillColor;
+  final TrianguloPosition position;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final lado = constraints.biggest.width;
+        return Transform(
+          transform: Matrix4.identity()..rotateZ(position.angle),
+          alignment: Alignment.topLeft,
+          origin: Offset(lado / 2, lado / 2),
+          child: CustomTrianguloWidget(
+            strokeWidth: strokeWidth,
+            anchoBoderExterior: anchoBoderExterior,
+            radiusPercentage: radiusPercentage,
+            borderColor: borderColor,
+            fillColor: fillColor,
+          ),
+        );
+      },
     );
   }
 }
@@ -104,7 +381,7 @@ class MyCustomPainter extends CustomPainter {
 
   MyCustomPainter({
     super.repaint,
-    this.borderColor = Colors.white,
+    required this.borderColor,
     required this.anchoBorderExterior,
     this.radiusPercentage = 0.2,
   });
@@ -130,317 +407,6 @@ class MyCustomPainter extends CustomPainter {
     final center = Offset(lado / 2, lado / 2);
 
     canvas.drawCircle(center, radius, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate != this;
-  }
-}
-
-class CuadradoConBorde extends CustomPainter {
-  final double strokeWidth;
-  final Color borderColor;
-  final Color fillColor;
-
-  CuadradoConBorde({
-    super.repaint,
-    required this.strokeWidth,
-    required this.borderColor,
-    required this.fillColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final width = size.width;
-    final height = size.height;
-    final lado = min(width, height);
-
-    final p1 = Offset(0, 0);
-    final p2 = Offset(width, height);
-    final p3 = Offset(width, 0);
-    final p4 = Offset(0, height);
-
-    final borderPainter = Paint()
-      ..color = borderColor
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final fillPainter = Paint()
-      ..color = fillColor
-      ..strokeWidth = 0
-      ..style = PaintingStyle.fill;
-
-    // dibujando líneas
-    // canvas.drawLine(p1, p2, paint);
-    // canvas.drawLine(p3, p4, paint);
-
-    // dibujando el borde del cuadrado
-    canvas.drawRect(
-        Rect.fromLTWH(
-          0 + strokeWidth / 2,
-          0 + strokeWidth / 2,
-          lado - strokeWidth,
-          lado - strokeWidth,
-        ),
-        borderPainter);
-
-    // Dibujando el cuadrado relleno
-    canvas.drawRect(
-        Rect.fromLTWH(
-          0 + strokeWidth,
-          0 + strokeWidth,
-          lado - 2 * strokeWidth,
-          lado - 2 * strokeWidth,
-        ),
-        fillPainter);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate != this;
-  }
-}
-
-class CustomTrianguloPainter extends CustomPainter {
-  CustomTrianguloPainter({
-    super.repaint,
-    this.strokeWidth = 6,
-    this.radiusPercentage = 1 / 6, // 16,67%
-    required this.borderColor,
-    required this.fillColor,
-  });
-
-  final double strokeWidth;
-  final double radiusPercentage;
-  final Color borderColor;
-  final Color fillColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final width = size.width;
-    final height = size.height;
-
-    final center = Offset(width / 2, height);
-
-    final radius = width * radiusPercentage;
-
-    final componenteY = sin(pi / 4) * radius;
-    final componenteX = cos(pi / 4) * radius;
-
-    // canvas.save();
-
-    final paintBaseLine = Paint()
-      ..strokeWidth = strokeWidth
-      ..color = borderColor;
-
-    final paintLineasInternas = Paint()
-      ..strokeWidth = strokeWidth / 2
-      ..style = PaintingStyle.stroke
-      ..color = borderColor;
-
-    final paintArcPrueba = Paint()
-      ..strokeWidth = strokeWidth / 2
-      ..style = PaintingStyle.stroke
-      ..color = borderColor;
-
-    final p1 = Offset(strokeWidth, strokeWidth / 2);
-    final p2 = Offset(width - strokeWidth, strokeWidth / 2);
-
-    final tinyOffsetX = (strokeWidth / 4) * cos(pi / 4);
-    final tinyOffsetY = (strokeWidth / 4) * sin(pi / 4);
-
-    final p2A = Offset(
-        width - strokeWidth / 2 - tinyOffsetX, strokeWidth / 2 - tinyOffsetY);
-    final p3 = Offset(width / 2 + componenteX - strokeWidth / 4 - tinyOffsetX,
-        height - componenteY - tinyOffsetY);
-
-    final p1A = Offset(
-        0 + strokeWidth / 2 + tinyOffsetX, strokeWidth / 2 - tinyOffsetY);
-    final p4 = Offset(width / 2 - componenteX + strokeWidth / 4 + tinyOffsetX,
-        height - componenteY - tinyOffsetY);
-
-    final centerAux = Offset(width / 2, height - strokeWidth / 4);
-
-    canvas.drawLine(p1, p2, paintBaseLine);
-    canvas.drawLine(p2A, p3, paintLineasInternas); //p3
-    canvas.drawLine(p1A, p4, paintLineasInternas); //p4
-
-    canvas.drawArc(
-        Rect.fromCenter(
-            center: centerAux, width: 2 * radius, height: 2 * radius),
-        5 * pi / 4,
-        pi / 2,
-        false,
-        paintArcPrueba);
-
-    final borderLateralPainter = Paint()
-      ..color = Colors.green
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final borderInternoPainter = Paint()
-      ..color = Colors.green
-      ..strokeWidth = strokeWidth / 2
-      ..style = PaintingStyle.stroke;
-
-    final fillPainter = Paint()
-      ..color = Colors.cyan
-      ..strokeWidth = 0
-      ..style = PaintingStyle.fill;
-
-    // dibujando líneas
-    // canvas.drawLine(p1, p2, paint);
-    // canvas.drawLine(p3, p4, paint);
-
-    // dibujando el borde del cuadrado
-    // canvas.drawRect(
-    //     Rect.fromLTWH(
-    //       0 + strokeWidth / 2,
-    //       0 + strokeWidth / 2,
-    //       lado - strokeWidth,
-    //       lado - strokeWidth,
-    //     ),
-    //     borderPainter);
-
-    // Dibujando el cuadrado relleno
-    // canvas.drawRect(
-    //     Rect.fromLTWH(
-    //       0 + strokeWidth,
-    //       0 + strokeWidth,
-    //       lado - 2 * strokeWidth,
-    //       lado - 2 * strokeWidth,
-    //     ),
-    //     fillPainter);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate != this;
-  }
-}
-
-class CustomTrianguloPainter2 extends CustomPainter {
-  CustomTrianguloPainter2({
-    super.repaint,
-    this.strokeWidth = 6,
-    this.radiusPercentage = 1 / 6, // 16,67%
-    required this.borderColor,
-    required this.fillColor,
-  });
-
-  final double strokeWidth;
-  final double radiusPercentage;
-  final Color borderColor;
-  final Color fillColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final width = size.width;
-    final height = size.height;
-
-    final radius = width * radiusPercentage;
-
-    final componenteY = sin(pi / 4) * radius;
-    final componenteX = cos(pi / 4) * radius;
-
-    // canvas.save();
-
-    final paintBaseRect = Paint()
-      ..strokeWidth = 0
-      ..style = PaintingStyle.fill
-      ..color = borderColor;
-
-    final paintTest = Paint()
-      ..strokeWidth = 0
-      ..style = PaintingStyle.fill
-      ..color = Colors.green;
-
-    final paintArcPrueba = Paint()
-      ..strokeWidth = strokeWidth / 2
-      ..style = PaintingStyle.stroke
-      ..color = borderColor;
-
-    final p1 = Offset(strokeWidth, 0);
-    final p2 = Offset(width - strokeWidth, strokeWidth);
-    canvas.drawRect(Rect.fromPoints(p1, p2), paintBaseRect);
-
-    Path path1 = Path()
-      ..addRect(Rect.fromLTWH(
-          strokeWidth, strokeWidth / 2, width / 2, strokeWidth / 2));
-
-    // Calcular el punto de pivote (esquina inferior izquierda)
-    double pivotX = strokeWidth; // X de la esquina izquierda
-    double pivotY =
-        strokeWidth; // Y de la esquina inferior (strokeWidth/2 + strokeWidth/2)
-
-    // Crear la matriz de transformación
-    Matrix4 matrix4 = Matrix4.identity();
-
-    // 1. Trasladar para que el pivote esté en el origen
-    matrix4.setTranslationRaw(-pivotX, -pivotY, 0);
-
-    // 2. Crear matriz de rotación y combinarla
-    Matrix4 rotationMatrix = Matrix4.identity()..rotateZ(pi / 4);
-    matrix4 = rotationMatrix * matrix4;
-
-    // 3. Trasladar de vuelta a la posición original
-    Matrix4 translationBack = Matrix4.identity()
-      ..setTranslationRaw(pivotX, pivotY, 0);
-    matrix4 = translationBack * matrix4;
-
-    // Aplicar la transformación
-    path1 = path1.transform(matrix4.storage);
-    canvas.drawPath(path1, paintTest);
-
-    final centerAux = Offset(width / 2, height - strokeWidth / 4);
-
-    canvas.drawArc(
-        Rect.fromCenter(
-            center: centerAux, width: 2 * radius, height: 2 * radius),
-        5 * pi / 4,
-        pi / 2,
-        false,
-        paintArcPrueba);
-
-    final borderLateralPainter = Paint()
-      ..color = Colors.green
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final borderInternoPainter = Paint()
-      ..color = Colors.green
-      ..strokeWidth = strokeWidth / 2
-      ..style = PaintingStyle.stroke;
-
-    final fillPainter = Paint()
-      ..color = Colors.cyan
-      ..strokeWidth = 0
-      ..style = PaintingStyle.fill;
-
-    // dibujando líneas
-    // canvas.drawLine(p1, p2, paint);
-    // canvas.drawLine(p3, p4, paint);
-
-    // dibujando el borde del cuadrado
-    // canvas.drawRect(
-    //     Rect.fromLTWH(
-    //       0 + strokeWidth / 2,
-    //       0 + strokeWidth / 2,
-    //       lado - strokeWidth,
-    //       lado - strokeWidth,
-    //     ),
-    //     borderPainter);
-
-    // Dibujando el cuadrado relleno
-    // canvas.drawRect(
-    //     Rect.fromLTWH(
-    //       0 + strokeWidth,
-    //       0 + strokeWidth,
-    //       lado - 2 * strokeWidth,
-    //       lado - 2 * strokeWidth,
-    //     ),
-    //     fillPainter);
   }
 
   @override
@@ -516,7 +482,7 @@ class CustomCirculoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final lado = size.width;
-    final radius = radiusPercentage * lado-anchoBordeExterior/2;
+    final radius = radiusPercentage * lado - anchoBordeExterior / 2;
     final radiusInterior = radius - strokeWidth;
     final borderExteriorPaint = Paint()..color = borderColor;
     final fillPaint = Paint()..color = fillColor;
@@ -566,69 +532,78 @@ class CustomFillTrianguloPainter extends CustomPainter {
   }
 }
 
-abstract class Figura {
-  final double strokeWidth;
-  final Color borderColor;
+class ComposicionColores {
   final Color fillColor;
+  final Color borderColor;
 
-  Figura(
-      {this.strokeWidth = 6,
-      required this.borderColor,
-      this.fillColor = Colors.transparent});
+  ComposicionColores(this.fillColor, this.borderColor);
 }
 
-enum Position { top, left, bottom, right }
+class Figura {
+  final Color fillColor;
+  final Color borderColor;
+  final int index;
+
+  Figura({
+    this.fillColor = Colors.transparent,
+    this.borderColor = Colors.transparent,
+    this.index = 0,
+  });
+}
 
 class Triangulo extends Figura {
-  final Position position;
+  final TrianguloPosition position;
+
   Triangulo({
-    super.strokeWidth,
-    required super.borderColor,
+    super.borderColor,
     super.fillColor,
     required this.position,
+    super.index,
   });
 }
 
 class Circulo extends Figura {
-  final double radius;
   Circulo({
-    super.strokeWidth,
-    required super.borderColor,
+    super.borderColor,
     super.fillColor,
-    required this.radius,
+    super.index,
   });
 }
 
 class CustomTrianguloWidget extends StatelessWidget {
   const CustomTrianguloWidget({
     super.key,
-    required this.lado,
+    // required this.lado,
     required this.strokeWidth,
     required this.anchoBoderExterior,
     required this.radiusPercentage,
+    required this.borderColor,
+    required this.fillColor,
   });
-  final double lado;
+  // final double lado;
   final double strokeWidth;
   final double anchoBoderExterior;
   final double radiusPercentage;
+  final Color borderColor;
+  final Color fillColor;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         CustomPaint(
-          size: Size.square(lado),
+          size: Size.square(double.infinity),
           painter: CustomFillTrianguloPainter(
               strokeWidth: strokeWidth,
               anchoBordeExterior: anchoBoderExterior,
-              fillColor: Colors.blue),
+              fillColor: fillColor),
         ),
         CustomPaint(
-          size: Size.square(lado),
+          size: Size.square(double.infinity),
           painter: CustomBorderTrianguloPainter(
             radiusPercentage: radiusPercentage,
             strokeWidth: strokeWidth,
-            borderColor: Colors.red,
+            borderColor: borderColor,
             anchoBordeExterior: anchoBoderExterior,
           ),
         ),
